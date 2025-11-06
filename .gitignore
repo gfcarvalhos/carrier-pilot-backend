@@ -1,10 +1,9 @@
-#Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-#Virtual environment
 venv
-
-#
 db.sqlite3
+*.log
+*.pyc
+/.mypy_cache
+/.vscode
