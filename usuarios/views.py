@@ -1,5 +1,5 @@
-from usuarios.models import Usuario, Perfil
-from usuarios.serializers import UsuarioSerializer, PerfilSerializer
+from usuarios.models import Usuario, Perfil, Habilidade
+from usuarios.serializers import UsuarioSerializer, PerfilSerializer, HabilidadeSerializer
 from rest_framework import viewsets
 
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -23,3 +23,7 @@ class PerfilViewSet(viewsets.ModelViewSet):
   """
   queryset= Perfil.objects.all().order_by('id')
   serializer_class=PerfilSerializer
+
+class HabilidadeViewSet(viewsets.ModelViewSet):
+    queryset = Habilidade.objects.all()
+    serializer_class = HabilidadeSerializer

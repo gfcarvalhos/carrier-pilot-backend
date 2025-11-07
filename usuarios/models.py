@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Usuario(models.Model):
   TIPO_USUARIO_CHOICES = (
@@ -23,6 +24,15 @@ class Perfil (models.Model):
   area_interesse = models.CharField(max_length=100)
   nivel_experiencia = models.CharField(max_length=1, blank=False, null=False, choices=NIVEL_EXPERIENCIA_CHOICES, default = 'j')
   objetivo_pessoal = models.TextField(blank=True, null=True)
+  criado_em = models.DateTimeField(default=timezone.now)
 
   def __str__(self):
-        return f"{self.usuario} ({self.nivel_experiencia})"
+        return f"{self.usuario} ({self.usuario.email})"
+
+class Habilidade (models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField(blank=True, null=True)
+    perfis = models.ManyToManyField(Perfil, related_name='habilidades',blank=True)
+
+    def __str__(self):
+      return f"{self.nome}"
