@@ -8,7 +8,7 @@ class Usuario(models.Model):
   )
   nome = models.CharField(max_length=100)
   email = models.EmailField(blank=False, max_length=30)
-  data_cadastro = models.DateTimeField()
+  data_cadastro = models.DateTimeField(auto_now_add=True)
   tipo_usuario = models.CharField(max_length=1, blank=False, null=False, choices=TIPO_USUARIO_CHOICES, default = 'G')
 
   def __str__(self):
