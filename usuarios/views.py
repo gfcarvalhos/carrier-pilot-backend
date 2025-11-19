@@ -1,7 +1,9 @@
 from usuarios.models import Usuario, Perfil, Habilidade
 from usuarios.serializers import UsuarioSerializer, PerfilSerializer, HabilidadeSerializer
-from rest_framework import viewsets, filters
+from usuarios.filters import PerfilFilter
+from rest_framework import viewsets, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
 
 class UsuarioViewSet(viewsets.ModelViewSet):
   """
@@ -12,10 +14,17 @@ class UsuarioViewSet(viewsets.ModelViewSet):
   - GET, POST, PUT, PATCH, DELETE
   """
   queryset= Usuario.objects.all().order_by('id')
-  filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-  ordering_fields = ['nome', 'data_cadastro']
-  filterset_fields = ['nome', 'tipo_usuario', 'email']
   serializer_class=UsuarioSerializer
+
+  filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+  filterset_fields = ['nome', 'tipo_usuario', 'user__email']
+  ordering_fields = ['nome', 'data_cadastro',]
+  ordering = ['id']
+
+  def get_permissions(self):
+        if self.action == "create":
+            return [permissions.AllowAny()]
+        return [IsAuthenticated()]
 
 class PerfilViewSet(viewsets.ModelViewSet):
   """
@@ -28,8 +37,13 @@ class PerfilViewSet(viewsets.ModelViewSet):
   queryset= Perfil.objects.all().order_by('id')
   filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
   ordering_fields = ['usuario__nome', 'usuario__data_cadastro', 'nivel_experiencia']
-  filterset_fields = ['nivel_experiencia', 'usuario__nome', 'usuario__email']
+  filterset_class = PerfilFilter
   serializer_class=PerfilSerializer
+
+  def get_permissions(self):
+      if self.action == "create":
+          return [permissions.AllowAny()]
+      return [IsAuthenticated()]
 
 class HabilidadeViewSet(viewsets.ModelViewSet):
     """

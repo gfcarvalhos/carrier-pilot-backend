@@ -14,5 +14,6 @@ routers.register('progresso', ProgressoViewSet, basename='progresso')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(routers.urls))
+    path('', include(routers.urls)),
+    path('carreiras/', include('carreiras.urls'))
 ]
