@@ -46,7 +46,7 @@ class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
           return [permissions.AllowAny()]
       return [IsAuthenticated()]
 
-class HabilidadeViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
+class HabilidadeViewSet(viewsets.ModelViewSet):
     """
     Descrição da ViewSet:
     - Endpoint para CRUD de habilidades.
@@ -58,3 +58,17 @@ class HabilidadeViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['perfis']
     serializer_class = HabilidadeSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+
+        if user.is_superuser:
+            return qs
+
+        try:
+            usuario = user.usuario
+        except:
+            return qs.none()
+
+        return qs.filter(perfis__usuario=usuario).distinct()

@@ -37,20 +37,26 @@ class IndirectUserFilterMixin:
 
 
 class OwnUserDataMixin:
-    owner_field = "user"
+    owner_field = "usuario"
 
     def get_queryset(self):
         qs = super().get_queryset()
+        django_user = self.request.user
 
-        if self.request.user.is_superuser:
+        if django_user.is_superuser:
             return qs
+        try:
+            usuario = django_user.usuario
+        except:
+            return qs.none()
         
-        filtro = {self.owner_field: self.request.user}
+        filtro = {self.owner_field: usuario}
         return qs.filter(**filtro)
 
     def perform_create(self, serializer):
-        if not self.request.user.is_superuser:
-            serializer.save(**{self.owner_field: self.request.user})
+        django_user = self.request.user
+        if not django_user.is_superuser:
+            serializer.save(**{self.owner_field: django_user.usuario})
         else:
             serializer.save()
 
@@ -60,4 +66,4 @@ class RestrictToSelfMixin:
 
         if self.request.user.is_superuser:
             return qs
-        return qs.filter(id=self.request.user.id)
+        return qs.filter(user=self.request.user)
