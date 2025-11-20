@@ -12,13 +12,20 @@ class Atividade(models.Model):
     (3, "Baixa"),
   ], default=3)
 
+  recomendacao = models.ForeignKey(
+        "Recomendacao",
+        on_delete=models.CASCADE,
+        related_name="atividades",
+        null=True,
+        blank=True
+  )
+
   def __str__(self):
     return f"{self.titulo} - {self.categoria}"
 
 
 class Recomendacao(models.Model):
   usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-  atividade = models.ForeignKey(Atividade, on_delete=models.SET_NULL, null=True)
 
   tema = models.CharField(max_length=200)
   subtema = models.CharField(max_length=200, blank=True, null=True)
