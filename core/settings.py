@@ -8,7 +8,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['carrier-pilot-backend-production.up.railway.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
