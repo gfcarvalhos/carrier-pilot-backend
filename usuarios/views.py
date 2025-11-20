@@ -4,8 +4,9 @@ from usuarios.filters import PerfilFilter
 from rest_framework import viewsets, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+from core.mixin.mixins import RestrictToSelfMixin, OwnUserDataMixin
 
-class UsuarioViewSet(viewsets.ModelViewSet):
+class UsuarioViewSet(RestrictToSelfMixin, viewsets.ModelViewSet):
   """
   Descrição da ViewSet:
   - Endpoint para CRUD de usuarios.
@@ -26,7 +27,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         return [IsAuthenticated()]
 
-class PerfilViewSet(viewsets.ModelViewSet):
+class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
   """
   Descrição da ViewSet:
   - Endpoint para CRUD de perfis.
@@ -45,7 +46,7 @@ class PerfilViewSet(viewsets.ModelViewSet):
           return [permissions.AllowAny()]
       return [IsAuthenticated()]
 
-class HabilidadeViewSet(viewsets.ModelViewSet):
+class HabilidadeViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
     """
     Descrição da ViewSet:
     - Endpoint para CRUD de habilidades.

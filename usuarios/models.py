@@ -30,7 +30,7 @@ class Perfil (models.Model):
   criado_em = models.DateTimeField(default=timezone.now)
 
   def __str__(self):
-        return f"{self.usuario} ({self.usuario.email})"
+        return f"{self.usuario} ({self.area_interesse}) - {self.nivel_experiencia}"
 
 class Habilidade (models.Model):
     nome = models.CharField(max_length=100)

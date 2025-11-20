@@ -7,6 +7,7 @@ from carreiras.services.ia_perplexity import Recomender
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from core.mixin.mixins import UniversalUserFilterMixin, IndirectUserFilterMixin
 
 class AtividadeViewSet(viewsets.ModelViewSet):
   """
@@ -23,7 +24,7 @@ class AtividadeViewSet(viewsets.ModelViewSet):
   serializer_class=AtividadeSerializer
   http_method_names = ["get", "put"]
 
-class RecomendacaoViewSet(viewsets.ModelViewSet):
+class RecomendacaoViewSet(UniversalUserFilterMixin, viewsets.ModelViewSet):
   """
   Descrição da ViewSet:
   - Endpoint para CRUD de Recomendacao.
@@ -37,7 +38,7 @@ class RecomendacaoViewSet(viewsets.ModelViewSet):
   filterset_fields = ['usuario__nome', 'usuario__user__email', 'status']
   serializer_class=RecomendacaoSerializer
 
-class ProgressoViewSet(viewsets.ModelViewSet):
+class ProgressoViewSet(UniversalUserFilterMixin, viewsets.ModelViewSet):
     """
     Descrição da ViewSet:
     - Endpoint para CRUD de Progresso.
@@ -50,6 +51,13 @@ class ProgressoViewSet(viewsets.ModelViewSet):
     filterset_fields = ['usuario__nome', 'usuario__data_cadastro', 'data_concluida', 'status']
     filterset_fields = ['usuario__nome', 'usuario__user__email', 'status', 'data_concluida']
     serializer_class = ProgressoSerializer
+
+
+class AtividadeViewSet(IndirectUserFilterMixin, viewsets.ModelViewSet):
+    user_relation = "recomendacao__usuario"
+    queryset = Atividade.objects.all().order_by('id')
+    serializer_class = AtividadeSerializer
+    http_method_names = ["get", "put"]
 
 class GerarRoadMapView(APIView):
     permission_classes = [IsAuthenticated]
