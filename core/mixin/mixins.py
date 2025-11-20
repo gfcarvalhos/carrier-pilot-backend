@@ -6,6 +6,10 @@ class UniversalUserFilterMixin:
     e superusuários acessem tudo.
     """
     def get_queryset(self):
+        #Swagger building only
+        if getattr(self, "swagger_fake_view", False):
+            return super().get_queryset()
+
         queryset = super().get_queryset()
         user_django = self.request.user
 
@@ -27,6 +31,10 @@ class IndirectUserFilterMixin:
     user_relation = None
     
     def get_queryset(self):
+        #Swagger building only
+        if getattr(self, "swagger_fake_view", False):
+            return super().get_queryset()
+
         queryset = super().get_queryset()
         user = self.request.user
 
@@ -40,6 +48,10 @@ class OwnUserDataMixin:
     owner_field = "usuario"
 
     def get_queryset(self):
+        #Swagger building only
+        if getattr(self, "swagger_fake_view", False):
+            return super().get_queryset()
+
         qs = super().get_queryset()
         django_user = self.request.user
 
@@ -62,6 +74,10 @@ class OwnUserDataMixin:
 
 class RestrictToSelfMixin:
     def get_queryset(self):
+        #Swagger building only
+        if getattr(self, "swagger_fake_view", False):
+            return super().get_queryset()
+        
         qs = super().get_queryset()
 
         if self.request.user.is_superuser:
