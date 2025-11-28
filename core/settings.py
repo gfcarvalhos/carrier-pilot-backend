@@ -145,5 +145,6 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8042",
     "http://127.0.0.1:8042",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://carrier-pilot-frontend.vercel.app/"
 ]
