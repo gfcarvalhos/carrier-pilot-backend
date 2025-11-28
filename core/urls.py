@@ -28,7 +28,7 @@ routers.register('progresso', ProgressoViewSet, basename='progresso')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(routers.urls)),
+    path('api/', include(routers.urls)),
     path('api/carreiras/', include('carreiras.urls')),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/auth/', include('usuarios.urls'))
