@@ -8,7 +8,10 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['carrier-pilot-backend-production.up.railway.app']
+if DEBUG == "True":
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['carrier-pilot-backend-production.up.railway.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -124,7 +127,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissions',
@@ -146,5 +149,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8042",
     "http://127.0.0.1:8042",
     "http://localhost:5173",
-    "https://carrier-pilot-ai.vercel.app/"
+    #"https://carrier-pilot-ai.vercel.app/"
 ]
