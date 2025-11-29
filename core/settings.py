@@ -139,11 +139,21 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/day',
-        'user': '50/day'
-    }
 }
+
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Use: Bearer <access_token>"
+        }
+    },
+}
+
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8042",
