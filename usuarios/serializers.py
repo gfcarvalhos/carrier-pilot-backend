@@ -56,6 +56,7 @@ class PerfilSerializer(serializers.ModelSerializer):
   class Meta:
     model = Perfil
     fields = '__all__'
+    read_only_fields = ['usuario']
 
 class HabilidadeSerializer(serializers.ModelSerializer):
   class Meta:
