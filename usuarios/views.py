@@ -40,11 +40,10 @@ class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
   ordering_fields = ['usuario__nome', 'usuario__data_cadastro', 'nivel_experiencia']
   filterset_class = PerfilFilter
   serializer_class=PerfilSerializer
-
-  def get_permissions(self):
-      if self.action == "create":
-          return [permissions.AllowAny()]
-      return [IsAuthenticated()]
+  permission_classes = [IsAuthenticated]
+  
+  def perform_create(self, serializer):
+      serializer.save(usuario=self.request.user)
 
 class HabilidadeViewSet(viewsets.ModelViewSet):
     """
@@ -58,6 +57,7 @@ class HabilidadeViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['perfis']
     serializer_class = HabilidadeSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         qs = super().get_queryset()
