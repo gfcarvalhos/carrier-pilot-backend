@@ -1,3 +1,4 @@
+from pydantic import ValidationError
 from usuarios.models import Usuario, Perfil, Habilidade
 from usuarios.serializers import UsuarioSerializer, PerfilSerializer, HabilidadeSerializer
 from usuarios.filters import PerfilFilter
@@ -43,7 +44,11 @@ class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
   permission_classes = [IsAuthenticated]
   
   def perform_create(self, serializer):
-      serializer.save(usuario=self.request.user)
+      try:
+        usuario = self.request.user.usuario
+      except Usuario.DoesNotExist:
+        raise ValidationError({"detail": "Usuário de perfil não encontrado."})
+      serializer.save(usuario=usuario)
 
 class HabilidadeViewSet(viewsets.ModelViewSet):
     """
