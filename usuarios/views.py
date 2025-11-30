@@ -1,4 +1,4 @@
-from pydantic import ValidationError
+from rest_framework.exceptions import ValidationError
 from usuarios.models import Usuario, Perfil, Habilidade
 from usuarios.serializers import UsuarioSerializer, PerfilSerializer, HabilidadeSerializer
 from usuarios.filters import PerfilFilter
