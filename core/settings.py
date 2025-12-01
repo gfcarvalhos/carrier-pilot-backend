@@ -160,3 +160,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://carrier-pilot-ai.vercel.app/"
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+     "https://carrier-pilot-backend-production.up.railway.app"
+]
