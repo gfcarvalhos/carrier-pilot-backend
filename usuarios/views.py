@@ -2,6 +2,7 @@ from rest_framework.exceptions import ValidationError
 from usuarios.models import Usuario, Perfil, Habilidade
 from usuarios.serializers import UsuarioSerializer, PerfilSerializer, HabilidadeSerializer
 from usuarios.filters import PerfilFilter
+from carreiras.services.generate_recomendation import gerar_roadmap_para_perfil
 from rest_framework import viewsets, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
@@ -46,9 +47,10 @@ class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
   def perform_create(self, serializer):
       try:
         usuario = self.request.user.usuario
+        perfil = serializer.save(usuario=usuario)
+        gerar_roadmap_para_perfil(perfil)
       except Usuario.DoesNotExist:
         raise ValidationError({"detail": "Usuário de perfil não encontrado."})
-      serializer.save(usuario=usuario)
 
 class HabilidadeViewSet(viewsets.ModelViewSet):
     """

@@ -6,8 +6,8 @@ client = Perplexity(api_key=os.getenv("PERPLEXITY_API_KEY"))
 
 class Recomender:
   @staticmethod
-  def gerar_roadmap(perfil, objetivo):
-    prompt = Recomender._montar_prompt(perfil, objetivo)
+  def gerar_roadmap(perfil):
+    prompt = Recomender._montar_prompt(perfil)
 
     response = client.chat.completions.create(
             model="sonar",
@@ -18,12 +18,11 @@ class Recomender:
     return Recomender._parse_response(conteudo)
   
   @staticmethod
-  def _montar_prompt(perfil, objetivo):
+  def _montar_prompt(perfil):
     return f"""
 Você é uma IA especialista em criação de roadmaps profissionais.
 Gere um ROADMAP detalhado para um usuário com o seguinte perfil:
 Nome: {perfil.usuario.nome}
-Objetivo: {objetivo}
 Área de interesse: {perfil.area_interesse}
 Nível de experiencia: {perfil.nivel_experiencia}
 Objetivo pessoal: {perfil.objetivo_pessoal}

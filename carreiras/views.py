@@ -1,13 +1,14 @@
 from carreiras.models import Atividade, Recomendacao, Progresso
-from usuarios.models import Perfil, Usuario
 from carreiras.serializers import AtividadeSerializer, RecomendacaoSerializer, ProgressoSerializer
+from usuarios.models import Perfil
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from carreiras.services.ia_perplexity import Recomender
+from carreiras.services.generate_recomendation import gerar_roadmap_para_perfil
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from core.mixin.mixins import UniversalUserFilterMixin, IndirectUserFilterMixin
+from django.shortcuts import get_object_or_404
 
 class AtividadeViewSet(viewsets.ModelViewSet):
   """
@@ -63,52 +64,12 @@ class GerarRoadMapView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user_django = request.user
-        try:
-            usuario = user_django.usuario
-        except Usuario.DoesNotExist:
-            return Response({"erro": "Usuário não possui perfil extendido (Usuario)"}, status=400)
-
-        objetivo = request.data.get("objetivo")
-        if not objetivo:
-            return Response({"erro": "O campo 'objetivo' é obrigatório"}, status=400)
-
-        if "tema" not in objetivo:
-            return Response({"erro": "O campo objetivo.tema é obrigatório"}, status=400)
-
-        perfil = Perfil.objects.filter(usuario=usuario).first()
-        if not perfil:
-            return Response({"erro": "Perfil não encontrado para o usuário autenticado"}, status=404)
-
-        payload = Recomender.gerar_roadmap(perfil, objetivo)
-
-        recomendacao = Recomendacao.objects.create(
-            usuario=usuario,
-            tema=payload["tema"],
-            subtema=payload["subtema"],
-            descricao=payload["descricao"],
-            recursos=payload["recursos"],
-            payload_ia=payload
-        )
-
-        atividades_criadas = []
-        for act in payload.get("atividades", []):
-            atividade = Atividade.objects.create(
-                titulo=act["titulo"],
-                descricao=act["descricao"],
-                categoria=act["categoria"],
-                duracao_minutos=act["duracao_minutos"],
-                prioridade=act["prioridade"]
-            )
-            atividades_criadas.append(atividade)
-
-            Progresso.objects.create(
-                usuario=usuario,
-                atividade=atividade,
-                status="pendente"
-            )
-
+        usuario = request.user.usuario
+        perfil_id = request.data.get("perfil_id")
+        perfil = get_object_or_404(Perfil, id=perfil_id, usuario=usuario)
+        recomendacao, atividades = gerar_roadmap_para_perfil(perfil)
+        
         return Response({
             "recomendacao_id": recomendacao.id,
-            "atividades": [a.id for a in atividades_criadas]
+            "atividades": [a.id for a in atividades]
         })
