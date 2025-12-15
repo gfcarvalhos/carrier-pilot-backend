@@ -45,12 +45,15 @@ class PerfilViewSet(OwnUserDataMixin, viewsets.ModelViewSet):
   permission_classes = [IsAuthenticated]
   
   def perform_create(self, serializer):
-      try:
+    try:
         usuario = self.request.user.usuario
-        perfil = serializer.save(usuario=usuario)
-        gerar_roadmap_para_perfil(perfil)
-      except Usuario.DoesNotExist:
+    except Usuario.DoesNotExist:
         raise ValidationError({"detail": "Usuário de perfil não encontrado."})
+    perfil = serializer.save(usuario=usuario)
+    try:
+        gerar_roadmap_para_perfil(perfil)
+    except Exception as e:
+        print("Erro ao gerar roadmap para perfil", perfil.id, e)
 
 class HabilidadeViewSet(viewsets.ModelViewSet):
     """

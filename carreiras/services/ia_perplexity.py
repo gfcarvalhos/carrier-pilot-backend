@@ -8,12 +8,16 @@ class Recomender:
   @staticmethod
   def gerar_roadmap(perfil):
     prompt = Recomender._montar_prompt(perfil)
-
-    response = client.chat.completions.create(
-            model="sonar",
-            messages=[{"role": "user", "content": prompt}],
-            stream=False
-    )
+    try :
+      response = client.chat.completions.create(
+              model="sonar",
+              messages=[{"role": "user", "content": prompt}],
+              stream=False
+      )
+    except Exception as e:
+      print("Erro ao chamar AI:", e)
+      return None
+    
     conteudo = response.choices[0].message.content
     return Recomender._parse_response(conteudo)
   
