@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from core.mixin.mixins import UniversalUserFilterMixin, IndirectUserFilterMixin
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
 
 class AtividadeViewSet(viewsets.ModelViewSet):
   """
@@ -38,6 +39,16 @@ class RecomendacaoViewSet(UniversalUserFilterMixin, viewsets.ModelViewSet):
   ordering_fields = ['usuario__nome', 'usuario__data_cadastro', 'status', 'data_gerada']
   filterset_fields = ['usuario__nome', 'usuario__user__email', 'status']
   serializer_class=RecomendacaoSerializer
+
+  @action(detail=False, methods=["get"], url_path="por-perfil/(?P<perfil_id>[^/.]+)")
+  def por_perfil(self, request, perfil_id=None):
+      """
+      GET /recomendacoes/por-perfil/<perfil_id>/
+      Retorna recomendações filtradas pelo id do perfil.
+      """
+      qs = self.get_queryset().filter(perfil_id=perfil_id)
+      serializer = self.get_serializer(qs, many=True)
+      return Response(serializer.data)
 
 class ProgressoViewSet(UniversalUserFilterMixin, viewsets.ModelViewSet):
     """

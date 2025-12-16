@@ -1,5 +1,5 @@
 from django.db import models
-from usuarios.models import Usuario
+from usuarios.models import Usuario, Perfil
 
 class Atividade(models.Model):
   titulo = models.CharField(max_length=100)
@@ -26,6 +26,7 @@ class Atividade(models.Model):
 
 class Recomendacao(models.Model):
   usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+  perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, null=True, blank=True)
 
   tema = models.CharField(max_length=200)
   subtema = models.CharField(max_length=200, blank=True, null=True)
