@@ -62,6 +62,16 @@ RESPONDA APENAS O JSON.
   @staticmethod
   def _parse_response(resposta_texto):
     try:
-      return json.loads(resposta_texto)
-    except:
-      raise ValueError("A IA não retornou um JSON válido")
+        data = json.loads(resposta_texto)
+    except Exception:
+        raise ValueError("A IA não retornou um JSON válido")
+
+    if isinstance(data, list):
+        if not data:
+            raise ValueError("A IA retornou uma lista vazia")
+        data = data[0]
+
+    if not isinstance(data, dict):
+        raise ValueError("Formato inesperado de resposta da IA")
+
+    return data
