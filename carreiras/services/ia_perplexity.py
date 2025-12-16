@@ -19,7 +19,6 @@ class Recomender:
       return None
     
     conteudo = response.choices[0].message.content
-    print("Payload IA bruto:", response, type(response))
     return Recomender._parse_response(conteudo)
   
   @staticmethod
@@ -58,21 +57,30 @@ o roadmap deve seguir EXATAMENTE o formato JSON abaixo:
   ]
 }}
 
-RESPONDA APENAS O JSON.
+Responda APENAS com um JSON válido, sem usar ```json```
+Não use crases, títulos ou explicações.
 """
   @staticmethod
-  def _parse_response(resposta_texto):
-    try:
-        data = json.loads(resposta_texto)
-    except Exception:
-        raise ValueError("A IA não retornou um JSON válido")
+  def _parse_response(resposta_texto: str):
+        print("Resposta bruta da IA:", repr(resposta_texto))
+        resposta = resposta_texto.strip()
+        if resposta.startswith("```"):
+            resposta = resposta.strip("`").lstrip()
+            if resposta.lower().startswith("json"):
+                resposta = resposta[4:].lstrip()
 
-    if isinstance(data, list):
-        if not data:
-            raise ValueError("A IA retornou uma lista vazia")
-        data = data[0]
+        try:
+            data = json.loads(resposta)
+        except Exception as e:
+            print("Erro ao fazer json.loads:", e, "Texto usado:", repr(resposta))
+            raise ValueError("A IA não retornou um JSON válido")
 
-    if not isinstance(data, dict):
-        raise ValueError("Formato inesperado de resposta da IA")
+        if isinstance(data, list):
+            if not data:
+                raise ValueError("A IA retornou uma lista vazia")
+            data = data[0]
 
-    return data
+        if not isinstance(data, dict):
+            raise ValueError("Formato inesperado de resposta da IA")
+
+        return data

@@ -1,10 +1,10 @@
 from carreiras.models import Atividade, Recomendacao, Progresso
-from carreiras.serializers import AtividadeSerializer, RecomendacaoSerializer, ProgressoSerializer
+from carreiras.serializers import AtividadeSerializer, RecomendacaoSerializer, ProgressoSerializer, GerarRoadmapInputSerializer
 from usuarios.models import Perfil
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from carreiras.services.generate_recomendation import gerar_roadmap_para_perfil
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from core.mixin.mixins import UniversalUserFilterMixin, IndirectUserFilterMixin
@@ -60,16 +60,21 @@ class AtividadeViewSet(IndirectUserFilterMixin, viewsets.ModelViewSet):
     serializer_class = AtividadeSerializer
     http_method_names = ["get", "put"]
 
-class GerarRoadMapView(APIView):
+class GerarRoadMapView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = GerarRoadmapInputSerializer
 
     def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         usuario = request.user.usuario
-        perfil_id = request.data.get("perfil_id")
+        perfil_id = serializer.validated_data["perfil_id"]
+
         perfil = get_object_or_404(Perfil, id=perfil_id, usuario=usuario)
         recomendacao, atividades = gerar_roadmap_para_perfil(perfil)
-        
+
         return Response({
             "recomendacao_id": recomendacao.id,
-            "atividades": [a.id for a in atividades]
+            "atividades": [a.id for a in atividades],
         })

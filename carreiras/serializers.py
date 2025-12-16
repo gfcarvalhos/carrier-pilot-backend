@@ -19,3 +19,6 @@ class ProgressoSerializer(serializers.ModelSerializer):
   class Meta:
       model = Progresso
       fields = '__all__'
+
+class GerarRoadmapInputSerializer(serializers.Serializer):
+    perfil_id = serializers.IntegerField()
