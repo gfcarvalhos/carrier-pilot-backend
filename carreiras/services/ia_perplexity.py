@@ -19,6 +19,7 @@ class Recomender:
       return None
     
     conteudo = response.choices[0].message.content
+    print("Payload IA bruto:", response, type(response))
     return Recomender._parse_response(conteudo)
   
   @staticmethod
