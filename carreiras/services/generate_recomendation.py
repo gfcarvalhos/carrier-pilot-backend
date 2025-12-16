@@ -7,6 +7,7 @@ def gerar_roadmap_para_perfil(perfil: Perfil) -> Recomendacao:
   
   recomendacao = Recomendacao.objects.create(
         usuario=perfil.usuario,
+        perfil=perfil, 
         tema=payload["tema"],
         subtema=payload["subtema"],
         descricao=payload["descricao"],
